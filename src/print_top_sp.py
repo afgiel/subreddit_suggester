@@ -3,7 +3,9 @@ import os
 import os.path as path
 from collections import Counter
 
-DATA_PATH = '../../reddit-top-2.5-million/data/'
+import constants  
+
+DATA_PATH = constants.DATA_PATH_FROM_SRC
 self_counts = Counter()
 for dirpath, dirnames, filenames in os.walk(DATA_PATH):
   for filename in filenames:

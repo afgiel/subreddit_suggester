@@ -1,14 +1,16 @@
 subreddits = [
-  "nostupidquestions",
+  "NoStupidQuestions",
   "shortscarystories",
-  "showerthoughts",
-  "debatereligion",
+  "Showerthoughts",
+  "DebateReligion",
   "confession",
   "relationship_advice",
-  "unsentletters",
+  "UnsentLetters",
   "self",
   "askphilosophy",
-  "shittypoetry",
-  "askmen",
-  "askwomen"
+  "ShittyPoetry",
+  "AskMen",
+  "AskWomen"
 ]
+
+DATA_PATH_FROM_SRC = '../../reddit-top-2.5-million/data/' 
