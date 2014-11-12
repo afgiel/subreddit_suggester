@@ -17,4 +17,12 @@ def tokenize(text):
     for word in words:
       if word not in excluded and re.match(excluded_re, word) is None:
         tokens.append(stemmer.stem(word))
+    bigrams = []
+    last_token = 'START'
+    separator = '_'
+    for token in tokens:
+      bigram = separator.join([last_token, token])
+      bigrams.append(bigram)
+      last_token = token
+    tokens.extend(bigrams)
     return tokens

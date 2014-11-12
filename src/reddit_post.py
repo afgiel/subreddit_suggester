@@ -1,6 +1,6 @@
 class RedditPost:
 
-  def __init__(self, title, self_text):
+  def __init__(self, title, text):
     self.title = title
-    self.self_text = self_text
+    self.text = text
 
