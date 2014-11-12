@@ -25,6 +25,11 @@ def run():
     sub_test = [x for x in sub_all if x not in sub_train]
     train_set.extend(sub_train)
     test_set.extend(sub_test)
+  print 'CREATING COUNTS FOR TRAIN SET' 
+  title_train_set = [(x[0].title, y) for x, y in train_set]
+  text_train_set = [(x[0].text, y) for x, y in train_set]
+  title_word_counts, title_doc_counts = feature_selection.count(title_train_set)
+  text_word_counts, text_doc_counts = feature_selection.count(text_train_set)
   print 'SELECTING FEATURES'
   train_posts = [x[0] for x in train_set]
   train_titles = [x.title for x in train_posts]
