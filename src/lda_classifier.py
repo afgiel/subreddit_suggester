@@ -56,6 +56,9 @@ def run():
   print 'TRAINING MODEL'
   model = LogisticRegression()
   model.fit(train_x, train_y)
+  print 'EVALUATING TRAIN'
+  pred_y = model.predict(train_x)
+  print classification_report(train_y, pred_y)
   print 'PREPROCESSING TEST DATA'
   test_posts = [x[0] for x in test_set]
   test_titles = [utils.tokenize(x.title) for x in test_posts]
@@ -67,6 +70,6 @@ def run():
   test_x = np.concatenate((test_title_x, test_text_x), axis=1)
   print 'MAKING PREDICTIONS'
   pred_y = model.predict(test_x)
-  print 'EVALUATING'
+  print 'EVALUATING TEST '
   print classification_report(des_y, pred_y)
   
