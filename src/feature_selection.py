@@ -62,19 +62,17 @@ def compute_mi(word, word_counts, doc_counts, num_tokens, m):
   return mi
 
 
-def select_all_features(posts_and_labels):
+def select_all_features(docs):
   token_to_index = dict()
   index = 0
-  for post, label in posts_and_labels:
-    title = post.title
-    text = post.text
-    title_tokens = utils.tokenize(title)
-    text_tokens = utils.tokenize(text)
-    tokens = set(title_tokens).union(set(text_tokens)) 
+  tokenized = []
+  for doc in docs:
+    tokens = utils.tokenize(doc) 
+    tokenized.append(tokens)
     for token in tokens:
       if not token in token_to_index:
         index += 1
         token_to_index[token] = index
-  return token_to_index
+  return token_to_index, tokenized 
 
 
