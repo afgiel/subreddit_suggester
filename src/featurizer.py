@@ -35,6 +35,21 @@ def tfidf_featurize(docs, feature_map, doc_counts):
         x[i][j] = tf*idf
   return x
 
+
+def lda_featurize(lda, dictionary, tfidf, texts):
+    m = len(texts)
+    n = lda.num_topics
+    x = np.zeros((m, n))
+    corpus = [dictionary.doc2bow(text) for text in texts]
+    corpus = [tfidf[doc] for doc in corpus]
+    for i in range(len(corpus)):
+      doc = corpus[i]
+      topic_vec = lda[doc]
+      for index, val in topic_vec:
+        x[i][index] = val
+    return x
+
+
 def make_label_vector(labels):
   m = len(labels)
   y = np.zeros(m)
