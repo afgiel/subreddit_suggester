@@ -68,5 +68,5 @@ def run():
   print 'MAKING PREDICTIONS'
   pred_y = model.predict(test_x)
   print 'EVALUATING'
-  print classification_report(des_y, pred_y, constants.subreddits)
+  print classification_report(des_y, pred_y)
   
