@@ -16,7 +16,7 @@ subreddits = [
 DATA_PATH_FROM_SRC = '../../reddit-top-2.5-million/data/' 
 STORAGE_PATH_FROM_SRC = '../storage/'
 
-NUM_TITLE_FEATURES = 1000 
+NUM_TITLE_FEATURES = 2000 
 NUM_TEXT_FEATURES = 9000 
 
 NUM_TITLE_TOPICS = 50
