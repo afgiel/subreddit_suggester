@@ -4,11 +4,7 @@ import os.path as path
 import numpy as np
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.linear_model import LogisticRegression
-<<<<<<< HEAD
-#from sklearn.svm import SVC
-=======
 from sklearn.svm import SVC
->>>>>>> changed evaluation and added svm
 from sklearn.metrics import classification_report
 
 import constants
@@ -16,11 +12,7 @@ import load_subreddit_data
 import reddit_post
 import feature_selection
 import featurizer
-<<<<<<< HEAD
-import evaluate
-import utils
-=======
->>>>>>> changed evaluation and added svm
+
 
 def run():
   train_set = [] 
@@ -48,25 +40,20 @@ def run():
   print 'TRAINING'
   naive_bayes = MultinomialNB()
   logistic_regression = LogisticRegression()
-  svm = SVC() 
+  #svm = SVC() 
   print '\tNAIVE BAYES'
   naive_bayes.fit(train_x, train_y)
   print '\tLOGISTIC REGRESSION'
   logistic_regression.fit(train_x, train_y)
-<<<<<<< HEAD
   #print '\tSVM'
   #svm.fit(train_x, train_y)
-  print 'EVALUTATING TRAIN'
+  print 'EVALUATING TRAIN' 
+  nb_predicted_y = naive_bayes.predict(train_x)
+  logres_predicted_y = logistic_regression.predict(train_x)
   print '\tNAIVE BAYES'
-  nb_pred_y = naive_bayes.predict(train_x)
-  print classification_report(train_y, nb_pred_y) 
-  print '\tLOGISTIC REGRESSION'
-  lg_pred_y = logistic_regression.predict(train_x)
-  print classification_report(train_y, lg_pred_y)
-=======
-  print '\tSVM'
-  svm.fit(train_x, train_y)
->>>>>>> changed evaluation and added svm
+  print classification_report(train_y, nb_predicted_y)
+  print '\LOGISTIC REGRESSION'
+  print classification_report(train_y, logres_predicted_y)
   print 'FEATURIZING TEST SET'  
   test_posts = [x[0] for x in test_set]
   test_titles = [x.title for x in test_posts]
@@ -81,21 +68,11 @@ def run():
   print 'TESTING'
   nb_predicted_y = naive_bayes.predict(test_x)
   logres_predicted_y = logistic_regression.predict(test_x) 
-<<<<<<< HEAD
   #svm_predicted_y = svm.predict(test_x)
-=======
-  svm_predicted_y = svm.predict(test_x)
->>>>>>> changed evaluation and added svm
-  print 'EVALUATING'
+  print 'EVALUATING TEST'
   print '\tNAIVE BAYES'
   print classification_report(desired_y, nb_predicted_y)
   print '\tLOGISTIC REGRESSION'
   print classification_report(desired_y, logres_predicted_y)
-<<<<<<< HEAD
-  #print '\tSVM' 
+  #print '\tSVM'
   #print classification_report(desired_y, svm_predicted_y)
-  
-=======
-  print '\tSVM'
-  print classification_report(desired_y, svm_predicted_y)
->>>>>>> changed evaluation and added svm
