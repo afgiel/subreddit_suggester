@@ -37,7 +37,13 @@ def select_top_n_mi_features(word_counts, doc_counts, all_words, m, n):
     count += 1
     if count % 100 == 0: print '\t' + str(count) + ' of ' + total
     mi[word] = compute_mi(word, word_counts, doc_counts, num_tokens, m)  
-  return mi.most_common(n) 
+  top = mi.most_common(n) 
+  index = 0
+  feature_map = dict()
+  for token, score in top:
+    feature_map[token] = index 
+    index += 1
+  return feature_map
   
 
 def compute_mi(word, word_counts, doc_counts, num_tokens, m):
