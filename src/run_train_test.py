@@ -33,13 +33,20 @@ def run():
   print 'TRAINING'
   naive_bayes = MultinomialNB()
   logistic_regression = LogisticRegression()
-  svm = SVC() 
+  #svm = SVC() 
   print '\tNAIVE BAYES'
   naive_bayes.fit(train_x, train_y)
   print '\tLOGISTIC REGRESSION'
   logistic_regression.fit(train_x, train_y)
-  print '\tSVM'
-  svm.fit(train_x, train_y)
+  #print '\tSVM'
+  #svm.fit(train_x, train_y)
+  print 'EVALUATING TRAIN' 
+  nb_predicted_y = naive_bayes.predict(train_x)
+  logres_predicted_y = logistic_regression.predict(train_x)
+  print '\tNAIVE BAYES'
+  print classification_report(train_y, nb_predicted_y)
+  print '\LOGISTIC REGRESSION'
+  print classification_report(train_y, logres_predicted_y)
   print 'FEATURIZING TEST SET'  
   test_posts = [x[0] for x in test_set]
   test_labels = [x[1] for x in test_set]
@@ -48,11 +55,11 @@ def run():
   print 'TESTING'
   nb_predicted_y = naive_bayes.predict(test_x)
   logres_predicted_y = logistic_regression.predict(test_x) 
-  svm_predicted_y = svm.predict(test_x)
-  print 'EVALUATING'
+  #svm_predicted_y = svm.predict(test_x)
+  print 'EVALUATING TEST'
   print '\tNAIVE BAYES'
   print classification_report(desired_y, nb_predicted_y)
   print '\tLOGISTIC REGRESSION'
   print classification_report(desired_y, logres_predicted_y)
-  print '\tSVM'
-  print classification_report(desired_y, svm_predicted_y)
+  #print '\tSVM'
+  #print classification_report(desired_y, svm_predicted_y)
