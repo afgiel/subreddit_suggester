@@ -22,9 +22,8 @@ def run():
   for subreddit in constants.subreddits:
     sub_all = load_subreddit_data.get_all_posts_and_labels(subreddit) 
     num_posts = len(sub_all)  
-    sub_train = random.sample(sub_all, int(num_posts*.05)) 
-    #sub_test = [x for x in sub_all if x not in sub_train]
-    sub_test = random.sample(sub_all, int(num_posts*.01))
+    sub_train = random.sample(sub_all, int(num_posts*.9)) 
+    sub_test = [x for x in sub_all if x not in sub_train]
     train_set.extend(sub_train)
     test_set.extend(sub_test)
   print 'COUNTING TRAIN SET' 
