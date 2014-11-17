@@ -25,12 +25,13 @@ def tfidf_featurize(docs, feature_map, doc_counts):
   for i in range(len(docs)):
     doc = docs[i]
     counter = Counter(doc)
-    max_occur = counter.most_common(1)[1]
+    if len(doc) == 0: continue 
+    max_occur = counter.most_common(1)[0][1]
     for token in doc:
       if token in feature_map:
         j = feature_map[token]
         tf = 0.5 + float(0.5*counter[token])/max_occur 
-        token_in_num_docs = sum([doc_counts[x][token] for x in doc_counts])
+        token_in_num_docs = sum([doc_counts[a][token] for a in doc_counts])
         idf = math.log(float(m)/token_in_num_docs)
         x[i][j] = tf*idf
   return x

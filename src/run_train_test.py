@@ -45,8 +45,8 @@ def run():
     text_feature_map = utils.load_json_file(text_feature_file_path)
   print 'FEATURIZING TRAIN SET' 
   train_labels = [x[1] for x in train_set]
-  train_title_x = featurizer.binary_featurize(train_tokenized_titles, title_feature_map)
-  train_text_x = featurizer.binary_featurize(train_tokenized_text, text_feature_map)
+  train_title_x = featurizer.tfidf_featurize(train_tokenized_titles, title_feature_map, title_doc_counts)
+  train_text_x = featurizer.tfidf_featurize(train_tokenized_text, text_feature_map, text_doc_counts)
   train_x = np.concatenate((train_title_x, train_text_x), axis=1) 
   train_y = featurizer.make_label_vector(train_labels)
   print 'TRAINING'
@@ -73,8 +73,8 @@ def run():
   test_tokenized_titles = [utils.tokenize(x) for x in test_titles] 
   test_tokenized_text = [utils.tokenize(x) for x in test_text]
   test_labels = [x[1] for x in test_set]
-  test_title_x = featurizer.binary_featurize(test_tokenized_titles, title_feature_map)
-  test_text_x = featurizer.binary_featurize(test_tokenized_text, text_feature_map)
+  test_title_x = featurizer.tfidf_featurize(test_tokenized_titles, title_feature_map, title_doc_counts)
+  test_text_x = featurizer.tfidf_featurize(test_tokenized_text, text_feature_map, text_doc_counts)
   test_x = np.concatenate((test_title_x, test_text_x), axis=1)
   desired_y = featurizer.make_label_vector(test_labels)
   print 'TESTING'
