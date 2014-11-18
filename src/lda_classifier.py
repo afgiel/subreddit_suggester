@@ -1,7 +1,7 @@
 import random
-
 import numpy as np
 from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
 from sklearn.metrics import classification_report
 from gensim import corpora, models
 
@@ -55,9 +55,13 @@ def run():
   train_y = featurizer.make_label_vector(train_labels)
   print 'TRAINING MODEL'
   model = LogisticRegression()
+  svm = SVC()
   model.fit(train_x, train_y)
+  svm.fit(train_x, train_y)
   print 'EVALUATING TRAIN'
   pred_y = model.predict(train_x)
+  print classification_report(train_y, pred_y)
+  pred_y = svm.predict(train_x)
   print classification_report(train_y, pred_y)
   print 'PREPROCESSING TEST DATA'
   test_posts = [x[0] for x in test_set]
@@ -71,5 +75,7 @@ def run():
   print 'MAKING PREDICTIONS'
   pred_y = model.predict(test_x)
   print 'EVALUATING TEST '
+  print classification_report(des_y, pred_y)
+  pred_y = svm.predict(test_x)
   print classification_report(des_y, pred_y)
   

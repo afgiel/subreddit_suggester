@@ -44,9 +44,12 @@ def lda_featurize(lda, dictionary, tfidf, texts):
     corpus = [tfidf[doc] for doc in corpus]
     for i in range(len(corpus)):
       doc = corpus[i]
-      topic_vec = lda[doc]
-      for index, val in topic_vec:
-        x[i][index] = val
+      #topic_vec = lda[doc]
+      gamma, _ = lda.inference([doc])
+      topic_dist = gamma[0] / sum(gamma[0])
+      #for index, val in topic_vec:
+        #x[i][index] = val
+      x[i] = topic_dist
     return x
 
 
