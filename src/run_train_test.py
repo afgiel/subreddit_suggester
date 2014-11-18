@@ -37,7 +37,6 @@ def run():
   train_title_x = featurizer.binary_featurize(train_tokenized_titles, title_feature_map)
   train_text_x = featurizer.binary_featurize(train_tokenized_text, text_feature_map)
   train_x = np.concatenate((train_title_x, train_text_x), axis=1) 
-  print 'here'
   train_y = featurizer.make_label_vector(train_labels)
   print 'TRAINING'
   naive_bayes = MultinomialNB()
@@ -49,6 +48,13 @@ def run():
   logistic_regression.fit(train_x, train_y)
   #print '\tSVM'
   #svm.fit(train_x, train_y)
+  print 'EVALUTATING TRAIN'
+  print '\tNAIVE BAYES'
+  nb_pred_y = naive_bayes.predict(train_x)
+  print classification_report(train_y, nb_pred_y) 
+  print '\tLOGISTIC REGRESSION'
+  lg_pred_y = logistic_regression.predict(train_x)
+  print classification_report(train_y, lg_pred_y)
   print 'FEATURIZING TEST SET'  
   test_posts = [x[0] for x in test_set]
   test_titles = [x.title for x in test_posts]
