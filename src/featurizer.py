@@ -4,18 +4,20 @@ import math
 
 import numpy as np
 
+import feature_selection
 import utils
+import constants
 
 
 class Featurizer():
   
-  def __init__(title_split, ngram, select_func, feat_func):
+  def __init__(self, title_split, ngram, select_func, feat_func):
     self.title_split = title_split
     self.ngram = ngram
     self.select_func = select_func
     self.feat_func = feat_func
 
-  def choose_features(train_set):
+  def choose_features(self, train_set):
     self.train_set = train_set
     print 'COUNTING TRAIN SET'  
     if self.title_split:  
@@ -24,15 +26,16 @@ class Featurizer():
       title_word_counts, title_doc_counts, train_tokenized_titles, title_words = feature_selection.count(title_train_set)
       text_word_counts, text_doc_counts, train_tokenized_text, text_words = feature_selection.count(text_train_set) 
       print 'SELECTING FEATURES'
-      title_feature_file_path = path.join(constants.STORAGE_PATH_FROM_SRC, 'features/title_' + str(self.select_func) + '_' + str(constants.NUM_TITLE_FEATURES)) 
-      text_feature_file_path = path.join(constants.STORAGE_PATH_FROM_SRC, 'features/text_' + str(self.select_func) + '_' + str(constants.NUM_TEXT_FEATURES)) 
+      title_feature_file_path = path.join(constants.STORAGE_PATH_FROM_SRC, 'features/title_' + str(self.select_func.__name__) + '_' + str(constants.NUM_TITLE_FEATURES)) 
+      text_feature_file_path = path.join(constants.STORAGE_PATH_FROM_SRC, 'features/text_' + str(self.select_func.__name__) + '_' + str(constants.NUM_TEXT_FEATURES)) 
+      print title_feature_file_path
       if not path.isfile(title_feature_file_path):
-        title_feature_map = select_func(title_words, title_word_counts, title_doc_counts, len(train_set), constants.NUM_TITLE_FEATURES)
+        title_feature_map = self.select_func(title_words, title_word_counts, title_doc_counts, len(train_set), constants.NUM_TITLE_FEATURES)
         utils.write_json_file(title_feature_map, title_feature_file_path)
       else: 
         title_feature_map = utils.load_json_file(title_feature_file_path)
       if not path.isfile(text_feature_file_path):
-        text_feature_map = select_func(text_words, text_word_counts, text_doc_counts, len(train_set), constants.NUM_TEXT_FEATURES)
+        text_feature_map = self.select_func(text_words, text_word_counts, text_doc_counts, len(train_set), constants.NUM_TEXT_FEATURES)
         utils.write_json_file(text_feature_map, text_feature_file_path) 
       else: 
         text_feature_map = utils.load_json_file(text_feature_file_path)
@@ -50,10 +53,10 @@ class Featurizer():
       both_train_set = [(x.title + ' ' + x.text, y) for x, y in train_set]
       both_word_counts, both_doc_counts, train_tokenized_both, both_words = feature_selection.count(both_train_set)
       print 'SELECTING FEATURES'
-      both_file_path = path.join(constants.STORAGE_PATH_FROM_SRC, 'features/both_' + str(self.select_func) + '_' + str(constants.NUM_BOTH_FEATURES)) 
+      both_file_path = path.join(constants.STORAGE_PATH_FROM_SRC, 'features/both_' + str(self.select_func.__name__) + '_' + str(constants.NUM_BOTH_FEATURES)) 
       if not path.isfile(both_file_path):
-        both_feature_map = feature_selection.select_top_n_mi_features(both_words, both_word_counts, both_doc_counts,  len(both_train_set), constants.NUM_BOTH_FEATURES)
-        utils.write_json_file(feature_map, both_file_path)
+        both_feature_map = self.select_func(both_words, both_word_counts, both_doc_counts,  len(both_train_set), constants.NUM_BOTH_FEATURES)
+        utils.write_json_file(both_feature_map, both_file_path)
       else: 
         both_feature_map = utils.load_json_file(both_file_path)
       self.both_word_counts = both_word_counts
@@ -62,9 +65,9 @@ class Featurizer():
       self.both_words = both_words
       self.both_feature_map = both_feature_map
 
-  def featurize_train(): 
-    train_labels = [x[1] for x in train_set]
-    train_y = featurizer.make_label_vector(train_labels)
+  def featurize_train(self): 
+    train_labels = [x[1] for x in self.train_set]
+    train_y = make_label_vector(train_labels)
     if self.title_split:
       train_title_x = self.feat_func(self.train_tokenized_titles, self.title_feature_map, doc_counts=self.title_doc_counts)
       train_text_x = self.feat_func(self.train_tokenized_text, self.text_feature_map, doc_counts=self.text_doc_counts)
@@ -76,20 +79,20 @@ class Featurizer():
       return train_x, train_y
 
 
-  def featurize_test(test_posts):
+  def featurize_test(self, test_posts):
     if self.title_split:
       test_titles = [x.title for x in test_posts]
       test_text = [x.text for x in test_posts]
       test_tokenized_titles = [utils.tokenize(x) for x in test_titles] 
       test_tokenized_text = [utils.tokenize(x) for x in test_text]
-      test_title_x = feat_func(test_tokenized_titles, self.title_feature_map, doc_counts=self.title_doc_counts)
-      test_text_x = feat_func(test_tokenized_text, self.text_feature_map, doc_counts=self.text_doc_counts)
+      test_title_x = self.feat_func(test_tokenized_titles, self.title_feature_map, doc_counts=self.title_doc_counts)
+      test_text_x = self.feat_func(test_tokenized_text, self.text_feature_map, doc_counts=self.text_doc_counts)
       test_x = np.concatenate((test_title_x, test_text_x), axis=1)
       return test_x
     else:
       test_both = [x.title + ' ' + x.text for x in test_posts]
       test_tokenized_both = [utils.tokenize(x) for x in test_both]
-      test_x = feat_func(test_tokenized_both, self.both_feature_map, doc_counts=self.both_doc_counts)
+      test_x = self.feat_func(test_tokenized_both, self.both_feature_map, doc_counts=self.both_doc_counts)
       return test_x
 
 # INTERFACE FOR FEATURIZER
@@ -125,7 +128,7 @@ def tfidf_featurize(docs, feature_map, doc_counts=None):
       if token in feature_map:
         j = feature_map[token]
         tf = 0.5 + float(0.5*counter[token])/max_occur 
-        token_in_num_docs = sum([doc_counts[a][token] for a in doc_counts])
+        token_in_num_docs = sum([doc_counts[a][token] for a in doc_counts]) + 1
         idf = math.log(float(m)/token_in_num_docs)
         x[i][j] = tf*idf
   return x

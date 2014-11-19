@@ -28,7 +28,7 @@ def count(text_and_labels):
   return word_count, doc_count, tokenized_docs, all_words
 
 
-def select_top_n_mi_features(word_counts, doc_counts, all_words, m, n):
+def select_top_n_mi_features(all_words, word_counts, doc_counts, m, n):
   mi = Counter()
   num_tokens = (sum([sum(word_counts[x].values()) for x in word_counts]))
   count = 0
@@ -62,7 +62,7 @@ def compute_mi(word, word_counts, doc_counts, num_tokens, m):
   return mi
 
 
-def select_all_features(all_words):
+def select_all_features(all_words, word_counts, doc_counts, m, n):
   token_to_index = dict()
   index = 0
   feature_map = dict()

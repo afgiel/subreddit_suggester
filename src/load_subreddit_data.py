@@ -2,6 +2,7 @@ import csv
 import os
 import os.path as path
 from collections import Counter
+import random
 
 import constants
 import reddit_post

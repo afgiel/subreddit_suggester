@@ -21,4 +21,6 @@ MODELS = {
 }
 
 # TODO grab and pass args
-run_train_test.run(True, 1, FEAT_FUNCS['binary'], SELECT_FUNCS['all'], MODELS['naive_bayes'])
+# TODO make ngrams actually do something within util.py
+# TODO write cross validation and make that shit work 
+run_train_test.run(False, 1, SELECT_FUNCS['mi'], FEAT_FUNCS['tfidf'], MODELS['naive_bayes'])

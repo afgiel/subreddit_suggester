@@ -16,7 +16,7 @@ def run(title_split, ngram, select_func, feat_func, model):
   f = featurizer.Featurizer(title_split, ngram, select_func, feat_func) 
   f.choose_features(train_set)
   print 'FEATURIZING TRAIN SET' 
-  train_x, train_y = f.featurize(train_set)
+  train_x, train_y = f.featurize_train()
   print 'TRAINING'
   m = model()
   m.fit(train_x, train_y)
