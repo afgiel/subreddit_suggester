@@ -62,17 +62,12 @@ def compute_mi(word, word_counts, doc_counts, num_tokens, m):
   return mi
 
 
-def select_all_features(docs):
+def select_all_features(all_words):
   token_to_index = dict()
   index = 0
-  tokenized = []
-  for doc in docs:
-    tokens = utils.tokenize(doc) 
-    tokenized.append(tokens)
-    for token in tokens:
-      if not token in token_to_index:
-        index += 1
-        token_to_index[token] = index
-  return token_to_index, tokenized 
-
+  feature_map = dict()
+  for token in all_words:
+    feature_map[token] = index 
+    index += 1
+  return feature_map
 

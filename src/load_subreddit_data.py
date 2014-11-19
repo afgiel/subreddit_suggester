@@ -20,3 +20,16 @@ def get_all_posts_and_labels(subreddit):
         subreddit_index = constants.subreddits.index(subreddit)
         post_and_labels.append((post, subreddit_index))
   return post_and_labels
+
+def get_train_and_test_sets():
+  train_set = [] 
+  test_set = [] 
+  print 'LOADING DATA FROM CSVS'
+  for subreddit in constants.subreddits:
+    sub_all = get_all_posts_and_labels(subreddit) 
+    num_posts = len(sub_all)  
+    sub_train = random.sample(sub_all, int(num_posts*.9)) 
+    sub_test = [x for x in sub_all if x not in sub_train]
+    train_set.extend(sub_train)
+    test_set.extend(sub_test)
+  return train_set, test_set
