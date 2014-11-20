@@ -10,6 +10,7 @@ import reddit_post
 def get_all_posts_and_labels(subreddit):
   post_and_labels = [] 
   subreddit_file_name = subreddit + '.csv' 
+  subreddit_index = constants.subreddits.index(subreddit)
   file_path = path.join(constants.DATA_PATH_FROM_SRC, subreddit_file_name) 
   with open(file_path) as csvfile:
     csvreader = csv.reader(csvfile)
@@ -18,7 +19,6 @@ def get_all_posts_and_labels(subreddit):
         title = row[4]        
         text = row[10]
         post = reddit_post.RedditPost(title, text) 
-        subreddit_index = constants.subreddits.index(subreddit)
         post_and_labels.append((post, subreddit_index))
   return post_and_labels
 

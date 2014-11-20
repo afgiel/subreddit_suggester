@@ -11,8 +11,7 @@ import feature_selection
 import featurizer
 
 
-def run(title_split, ngram, select_func, feat_func, model):
-  train_set, test_set =  load_subreddit_data.get_train_and_test_sets()
+def run(title_split, ngram, select_func, feat_func, model, train_set, test_set):
   f = featurizer.Featurizer(title_split, ngram, select_func, feat_func) 
   f.choose_features(train_set)
   print 'FEATURIZING TRAIN SET' 
