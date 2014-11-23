@@ -8,13 +8,13 @@ import constants
 # word_count is a map from token -> counter label
 # doc_count is a map from label -> counter token
 # all_words is the set of all tokens seen 
-def count(text_and_labels):
+def count(text_and_labels, ngram):
   word_count = dict()
   doc_count = dict()
   tokenized_docs = []
   all_words = set()
   for text, label in text_and_labels:
-    tokens = utils.tokenize(text)
+    tokens = utils.tokenize(text, ngram)
     tokenized_docs.append(tokens)
     for token in tokens:
       if token not in word_count:

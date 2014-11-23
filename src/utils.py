@@ -2,7 +2,7 @@ import json
 
 from nltk.tokenize import word_tokenize
 
-def tokenize(text):
+def tokenize(text, n):
   return word_tokenize(text.lower())    
     # TODO : NGRAM 
 

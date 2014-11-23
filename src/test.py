@@ -9,6 +9,7 @@ import argparse
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
+from sklearn.metrics import classification_report
 
 FEAT_FUNCS = {
   'tfidf': featurizer.tfidf_featurize, 
@@ -57,10 +58,16 @@ feature_sel, feature_rep, model, kfolds, ngram, title_split = get_args()
 if kfolds:
   print 'RUNNING KFOLD CROSS-VALIDATION WITH', kfolds, 'FOLDS'
   k_folder = kfold.KFolder(kfolds)
+  des_y = []
+  pred_y = []
   while k_folder.has_next_fold():
     print '******** TESTING ON FOLD', k_folder.current_fold, '***********'
     train_set, test_set = k_folder.get_next_fold()
-    run_train_test.run(k_folder.current_fold, title_split, ngram, feature_sel, feature_rep, model, train_set, test_set)
+    des_i_y, pred_i_y = run_train_test.run(k_folder.current_fold, title_split, ngram, feature_sel, feature_rep, model, train_set, test_set)
+    des_y.extend(des_i_y)
+    pred_y.extend(pred_i_y)
+  print '******EVALUATING OVER ALL FOLDS******'
+  print classification_report(des_y, pred_y)
 else:
   train_set, test_set =  load_subreddit_data.get_train_and_test_sets()
   run_train_test.run('all', title_split, ngram, feature_sel, feature_rep, model, train_set, test_set)
