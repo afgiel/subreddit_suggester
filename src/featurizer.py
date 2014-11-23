@@ -17,7 +17,12 @@ class Featurizer():
     self.select_func = select_func
     self.feat_func = feat_func
 
-  def choose_features(self, train_set):
+  def get_file_path(self, feat_type, num_features, fold_num):
+    file_name = '_'.join([feat_type, str(fold_num), str(self.select_func.__name__), str(num_features)])
+    return path.join(constants.STORAGE_PATH_FROM_SRC, 'features', file_name) 
+
+
+  def choose_features(self, train_set, fold_num):
     self.train_set = train_set
     print 'COUNTING TRAIN SET'  
     if self.title_split:  
@@ -26,9 +31,8 @@ class Featurizer():
       title_word_counts, title_doc_counts, train_tokenized_titles, title_words = feature_selection.count(title_train_set)
       text_word_counts, text_doc_counts, train_tokenized_text, text_words = feature_selection.count(text_train_set) 
       print 'SELECTING FEATURES'
-      title_feature_file_path = path.join(constants.STORAGE_PATH_FROM_SRC, 'features/title_' + str(self.select_func.__name__) + '_' + str(constants.NUM_TITLE_FEATURES)) 
-      text_feature_file_path = path.join(constants.STORAGE_PATH_FROM_SRC, 'features/text_' + str(self.select_func.__name__) + '_' + str(constants.NUM_TEXT_FEATURES)) 
-      print title_feature_file_path
+      title_feature_file_path = self.get_file_path('title', constants.NUM_TITLE_FEATURES, fold_num)
+      text_feature_file_path = self.get_file_path('text', constants.NUM_TEXT_FEATURES, fold_num)
       if not path.isfile(title_feature_file_path):
         title_feature_map = self.select_func(title_words, title_word_counts, title_doc_counts, len(train_set), constants.NUM_TITLE_FEATURES)
         utils.write_json_file(title_feature_map, title_feature_file_path)
@@ -53,7 +57,7 @@ class Featurizer():
       both_train_set = [(x.title + ' ' + x.text, y) for x, y in train_set]
       both_word_counts, both_doc_counts, train_tokenized_both, both_words = feature_selection.count(both_train_set)
       print 'SELECTING FEATURES'
-      both_file_path = path.join(constants.STORAGE_PATH_FROM_SRC, 'features/both_' + str(self.select_func.__name__) + '_' + str(constants.NUM_BOTH_FEATURES)) 
+      both_file_path = self.get_file_path('both', constants.NUM_BOTH_FEATURES, fold_num) 
       if not path.isfile(both_file_path):
         both_feature_map = self.select_func(both_words, both_word_counts, both_doc_counts,  len(both_train_set), constants.NUM_BOTH_FEATURES)
         utils.write_json_file(both_feature_map, both_file_path)

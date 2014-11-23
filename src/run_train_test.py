@@ -11,9 +11,9 @@ import feature_selection
 import featurizer
 
 
-def run(title_split, ngram, select_func, feat_func, model, train_set, test_set):
+def run(fold_num, title_split, ngram, select_func, feat_func, model, train_set, test_set):
   f = featurizer.Featurizer(title_split, ngram, select_func, feat_func) 
-  f.choose_features(train_set)
+  f.choose_features(train_set, fold_num)
   print 'FEATURIZING TRAIN SET' 
   train_x, train_y = f.featurize_train()
   print 'TRAINING'
