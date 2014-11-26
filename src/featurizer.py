@@ -120,36 +120,49 @@ def binary_featurize(docs, feature_map, doc_counts=None):
   return x  
 
 def tfidf_featurize(docs, feature_map, doc_counts=None): 
+  num_train_docs = doc_counts['NUM_TRAIN_DOCS']
   n = len(feature_map) + 1
   m = len(docs)
-  x = np.zeros((m, n))
-  for i in range(len(docs)):
+  x = np.zeros((m, n)) 
+  base_score = 0.5*math.log(float(num_train_docs)) 
+  x.fill(base_score)
+  for i in range(m):
     doc = docs[i]
     counter = Counter(doc)
-    if len(doc) == 0: continue 
+    if len(counter) == 0: continue
     max_occur = counter.most_common(1)[0][1]
     for token in doc:
       if token in feature_map:
         j = feature_map[token]
         tf = 0.5 + float(0.5*counter[token])/max_occur 
-        token_in_num_docs = sum([doc_counts[a][token] for a in doc_counts]) + 1
-        idf = math.log(float(m)/token_in_num_docs)
+        token_in_num_docs = sum([doc_counts[a][token] for a in doc_counts if a != 'NUM_TRAIN_DOCS']) + 1
+        idf = math.log(float(num_train_docs)/token_in_num_docs)
         x[i][j] = tf*idf
   return x
 
+def count_tfidf_featurize(docs, feature_map, doc_counts=None): 
+  n = 1
+  m = len(docs)
+  x = np.zeros((m, n))
+  for i in range(len(docs)):
+    doc = docs[i]
+    x[i][0] = len(doc)
+  tfidf = tfidf_featurize(docs, feature_map, doc_counts)
+  return np.concatenate((x, tfidf), axis=1)
+  
 
 def lda_featurize(lda, dictionary, tfidf, texts):
-    m = len(texts)
-    n = lda.num_topics
-    x = np.zeros((m, n))
-    corpus = [dictionary.doc2bow(text) for text in texts]
-    corpus = [tfidf[doc] for doc in corpus]
-    for i in range(len(corpus)):
-      doc = corpus[i]
-      gamma, _ = lda.inference([doc])
-      topic_dist = gamma[0] / sum(gamma[0])
-      x[i] = topic_dist
-    return x
+  m = len(texts)
+  n = lda.num_topics
+  x = np.zeros((m, n))
+  corpus = [dictionary.doc2bow(text) for text in texts]
+  corpus = [tfidf[doc] for doc in corpus]
+  for i in range(len(corpus)):
+    doc = corpus[i]
+    gamma, _ = lda.inference([doc])
+    topic_dist = gamma[0] / sum(gamma[0])
+    x[i] = topic_dist
+  return x
 
 
 def make_label_vector(labels):

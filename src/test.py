@@ -14,6 +14,7 @@ from sklearn.metrics import classification_report
 FEAT_FUNCS = {
   'tfidf': featurizer.tfidf_featurize, 
   'binary': featurizer.binary_featurize,
+  'count_tfidf': featurizer.count_tfidf_featurize
 }
 
 SELECT_FUNCS = {

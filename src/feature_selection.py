@@ -11,6 +11,7 @@ import constants
 def count(text_and_labels, ngram):
   word_count = dict()
   doc_count = dict()
+  doc_count['NUM_TRAIN_DOCS'] = len(text_and_labels)
   tokenized_docs = []
   all_words = set()
   for text, label in text_and_labels:
@@ -35,7 +36,7 @@ def select_top_n_mi_features(all_words, word_counts, doc_counts, m, n):
   total = str(len(all_words))
   for word in all_words:
     count += 1
-    if count % 100 == 0: print '\t' + str(count) + ' of ' + total
+    if count % 1000 == 0: print '\t' + str(count) + ' of ' + total
     mi[word] = compute_mi(word, word_counts, doc_counts, num_tokens, m)  
   top = mi.most_common(n) 
   index = 0
