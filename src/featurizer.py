@@ -150,6 +150,16 @@ def count_tfidf_featurize(docs, feature_map, doc_counts=None):
   tfidf = tfidf_featurize(docs, feature_map, doc_counts)
   return np.concatenate((x, tfidf), axis=1)
   
+def count_binary_featurize(docs, feature_map, doc_counts=None): 
+  n = 1
+  m = len(docs)
+  x = np.zeros((m, n))
+  for i in range(len(docs)):
+    doc = docs[i]
+    x[i][0] = len(doc)
+  binary = binary_featurize(docs, feature_map, doc_counts)
+  return np.concatenate((x, binary), axis=1)
+
 
 def lda_featurize(lda, dictionary, tfidf, texts):
   m = len(texts)
