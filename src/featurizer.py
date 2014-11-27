@@ -7,7 +7,8 @@ import numpy as np
 import feature_selection
 import utils
 import constants
-
+from unidecode import unidecode
+from textblob import TextBlob
 
 class Featurizer():
   
@@ -160,7 +161,6 @@ def count_binary_featurize(docs, feature_map, doc_counts=None):
   binary = binary_featurize(docs, feature_map, doc_counts)
   return np.concatenate((x, binary), axis=1)
 
-
 def lda_featurize(lda, dictionary, tfidf, texts):
   m = len(texts)
   n = lda.num_topics
@@ -174,6 +174,37 @@ def lda_featurize(lda, dictionary, tfidf, texts):
     x[i] = topic_dist
   return x
 
+def senitment_tfidf_featurize(docs, feature_map, doc_counts=None):
+  n = 1
+  m = len(docs)
+  x = np.zeros((m, n))
+  for i in range(len(docs)):
+    doc = docs[i]
+    sentence = TextBlob(make_string(doc))
+    sentiment_score = 0
+    subjectivity_score = 0
+    if sentence != "c-4": #for some reason it breaks trying to find synonyms for c-4
+      sentiment_score = sentence.sentiment.polarity
+      subjectivity_score = sentence.sentiment.subjectivity
+    
+    x[i][0] = sentiment_score #consider having both sentiment score and subjectivity score
+
+  tfidf = tfidf_featurize(docs, feature_map, doc_counts)
+  return np.concatenate((x, tfidf), axis=1)
+
+def make_string(word_list):
+  punctuation = [".", "!", "?", ",", "'", "(", ")"]
+  sentence = ""
+  for i in range(len(word_list)):
+    word = unidecode(word_list[i])
+    if word in punctuation:
+      sentence = sentence + word
+    elif i == 0:
+      sentence = sentence + word
+    else:
+      sentence = sentence + " " + word
+
+  return sentence
 
 def make_label_vector(labels):
   m = len(labels)

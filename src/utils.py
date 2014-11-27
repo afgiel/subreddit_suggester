@@ -1,10 +1,22 @@
 import json
 
 from nltk.tokenize import word_tokenize
+from nltk.util import ngrams
+from nltk.tokenize.punkt import PunktWordTokenizer
+from unidecode import unidecode
+from tokenize import untokenize
+
 
 def tokenize(text, n):
-  return word_tokenize(text.lower())    
-    # TODO : NGRAM 
+
+  tokenized = PunktWordTokenizer().tokenize(text.lower())
+
+  if n == 1:
+  	return tokenized
+
+  return list(ngrams(tokenized, n))  
+
+  #return word_tokenize(text.lower())
 
 
 def write_json_file(obj, file_path):
