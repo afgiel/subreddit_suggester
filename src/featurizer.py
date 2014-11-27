@@ -140,6 +140,7 @@ def tfidf_featurize(docs, feature_map, doc_counts=None):
         x[i][j] = tf*idf
   return x
 
+<<<<<<< Updated upstream
 def count_tfidf_featurize(docs, feature_map, doc_counts=None): 
   n = 1
   m = len(docs)
@@ -159,6 +160,19 @@ def count_binary_featurize(docs, feature_map, doc_counts=None):
     x[i][0] = len(doc)
   binary = binary_featurize(docs, feature_map, doc_counts)
   return np.concatenate((x, binary), axis=1)
+=======
+def sentiment_featurize(docs, feature_map, doc_counts=None):
+  n = len(feature_map) + 1
+  m = len(docs)
+  x = np.zeros((m,n))
+  for i in range(len(docs)):
+    doc = docs[i]
+    print doc
+    j = feature_map[i][j]
+    x[i][j] = 0
+
+  return x
+>>>>>>> Stashed changes
 
 
 def lda_featurize(lda, dictionary, tfidf, texts):
