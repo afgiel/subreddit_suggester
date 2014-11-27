@@ -174,7 +174,7 @@ def lda_featurize(lda, dictionary, tfidf, texts):
     x[i] = topic_dist
   return x
 
-def senitment_tfidf_featurize(docs, feature_map, doc_counts=None):
+def sentiment_tfidf_featurize(docs, feature_map, doc_counts=None):
   n = 1
   m = len(docs)
   x = np.zeros((m, n))

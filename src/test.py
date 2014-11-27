@@ -16,7 +16,7 @@ FEAT_FUNCS = {
   'binary': featurizer.binary_featurize,
   'count_tfidf': featurizer.count_tfidf_featurize,
   'count_binary': featurizer.count_binary_featurize,
-  'sentiment_tfidf': featurizer.senitment_tfidf_featurize
+  'sentiment_tfidf': featurizer.sentiment_tfidf_featurize
 }
 
 SELECT_FUNCS = {
