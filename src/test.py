@@ -35,12 +35,12 @@ MODELS = {
 def get_args():
   parser = argparse.ArgumentParser(description="Test different learning models, feature representations" +
                                                 "and parameters on the reddit datasets.")
-  parser.add_argument('-model', choices=MODELS.keys(), default=MODELS.keys()[0], type=str)
-  parser.add_argument('-featureSelector', choices=SELECT_FUNCS.keys(), default=SELECT_FUNCS.keys()[0], type=str)
-  parser.add_argument('-featureRepresentation', choices=FEAT_FUNCS.keys(), default=FEAT_FUNCS.keys()[0], type=str)
-  parser.add_argument('-kfolds', default = 0, type=int)
-  parser.add_argument('-ngram', default = 1, type=int)
-  parser.add_argument('-titleSplit', default = False, type=bool)
+  parser.add_argument('-model', '-m', choices=MODELS.keys(), default=MODELS.keys()[0], type=str)
+  parser.add_argument('-featureSelector', '-s', choices=SELECT_FUNCS.keys(), default=SELECT_FUNCS.keys()[0], type=str)
+  parser.add_argument('-featureRepresentation', '-f',choices=FEAT_FUNCS.keys(), default=FEAT_FUNCS.keys()[0], type=str)
+  parser.add_argument('-kfolds', '-k', default = 0, type=int)
+  parser.add_argument('-ngram', '-n', default = 1, type=int)
+  parser.add_argument('-titleSplit', '-t', default = False, type=bool)
   args = parser.parse_args()
 
   model = MODELS[args.model]
