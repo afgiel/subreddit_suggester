@@ -192,6 +192,25 @@ def sentiment_tfidf_featurize(docs, feature_map, doc_counts=None):
   tfidf = tfidf_featurize(docs, feature_map, doc_counts)
   return np.concatenate((x, tfidf), axis=1)
 
+def sentiment_binary_featurize(docs, feature_map, doc_counts=None):
+  n = 1
+  m = len(docs)
+  x = np.zeros((m, n))
+  for i in range(len(docs)):
+    doc = docs[i]
+    sentence = TextBlob(make_string(doc))
+    sentiment_score = 0
+    subjectivity_score = 0
+    if sentence != "c-4": #for some reason it breaks trying to find synonyms for c-4
+      sentiment_score = sentence.sentiment.polarity
+      subjectivity_score = sentence.sentiment.subjectivity
+    
+    x[i][0] = sentiment_score #consider having both sentiment score and subjectivity score
+
+  binary = binary_featurize(docs, feature_map, doc_counts)
+  return np.concatenate((x, binary), axis=1)
+
+
 def make_string(word_list):
   punctuation = [".", "!", "?", ",", "'", "(", ")"]
   sentence = ""

@@ -64,9 +64,8 @@ def compute_mi(word, word_counts, doc_counts, num_tokens, m):
 
 
 def select_all_features(all_words, word_counts, doc_counts, m, n):
-  token_to_index = dict()
   index = 0
-  feature_map = dict()
+  feature_map = Counter()
   for token in all_words:
     feature_map[token] = index 
     index += 1
