@@ -26,8 +26,8 @@ SELECT_FUNCS = {
 }
 
 MODELS = {
-  'naive_bayes': MultinomialNB,
   'logistic_regression': LogisticRegression,
+  'naive_bayes': MultinomialNB,
   'svm': SVC
 }
 
