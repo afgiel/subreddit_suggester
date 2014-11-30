@@ -3,6 +3,7 @@ import os.path as path
 import math
 
 import numpy as np
+from gensim import corpora, models
 
 import feature_selection
 import utils
@@ -139,7 +140,7 @@ class Featurizer():
       if i % 100 == 0: print i, 'of', m
       doc = docs[i]
       counter = Counter(doc)
-      max_occur = counter.most_common(1)[0][1]
+      if len(counter) != 0: max_occur = counter.most_common(1)[0][1]
       for j in range(n-1):
         token = feature_map[j]
         if token in counter:
@@ -152,15 +153,29 @@ class Featurizer():
     return x
 
 
-  def lda_featurize(self, lda, dictionary, tfidf, texts):
-    m = len(texts)
-    n = lda.num_topics
+  def lda_featurize(self, docs, feature_map, doc_counts=None):
+    m = len(docs)
+    n = constants.NUM_TOPICS
     x = np.zeros((m, n))
-    corpus = [dictionary.doc2bow(text) for text in texts]
-    corpus = [tfidf[doc] for doc in corpus]
+    for i in range(m):
+      docs[i] = [token for token in docs[i] if token in feature_map]
+    if not hasattr(self, 'dictionary'):
+      print 'CREATING LDA DICTIONARY'
+      self.dictionary = corpora.Dictionary(docs)
+    print 'CREATING LDA CORPUS'
+    corpus = [self.dictionary.doc2bow(doc) for doc in docs]
+    if not hasattr(self, 'lda_tfidf'):
+      print 'TRAINING LDA TFIDF'
+      self.lda_tfidf = models.TfidfModel(corpus) 
+    print 'APPLYING LDA TFIDF'
+    corpus = [self.lda_tfidf[doc] for doc in corpus]
+    if not hasattr(self, 'lda'):
+      print 'TRAINING LDA'
+      self.lda = models.ldamodel.LdaModel(corpus=corpus, id2word=self.dictionary, num_topics=constants.NUM_TOPICS) 
+    print 'INFERRING TOPICS'
     for i in range(len(corpus)):
       doc = corpus[i]
-      gamma, _ = lda.inference([doc])
+      gamma, _ = self.lda.inference([doc])
       topic_dist = gamma[0] / sum(gamma[0])
       x[i] = topic_dist
     return x
@@ -173,7 +188,7 @@ class Featurizer():
     for i in range(len(docs)):
       doc = docs[i]
       x[i][0] = len(doc)
-    tfidf = tfidf_featurize(docs, feature_map, doc_counts)
+    tfidf = self.idf_featurize(docs, feature_map, doc_counts)
     return np.concatenate((x, tfidf), axis=1)
     
   def count_binary_featurize(self, docs, feature_map, doc_counts=None): 
@@ -183,8 +198,20 @@ class Featurizer():
     for i in range(len(docs)):
       doc = docs[i]
       x[i][0] = len(doc)
-    binary = binary_featurize(docs, feature_map, doc_counts)
+    binary = self.binary_featurize(docs, feature_map, doc_counts)
     return np.concatenate((x, binary), axis=1)
+
+
+  def lda_tfidf_featurize(self, docs, feature_map, doc_counts=None): 
+    lda = self.lda_featurize(docs, feature_map, doc_counts)
+    tfidf = self.tfidf_featurize(docs, feature_map, doc_counts)
+    return np.concatenate((lda, tfidf), axis=1)
+
+
+  def lda_binary_featurize(self, docs, feature_map, doc_counts=None): 
+    lda = self.lda_featurize(docs, feature_map, doc_counts)
+    binary = self.binary_featurize(docs, feature_map, doc_counts)
+    return np.concatenate((lda, binary), axis=1)
 
 
   def sentiment_tfidf_featurize(self, docs, feature_map, doc_counts=None):
@@ -202,7 +229,7 @@ class Featurizer():
       
       x[i][0] = sentiment_score #consider having both sentiment score and subjectivity score
 
-    tfidf = tfidf_featurize(docs, feature_map, doc_counts)
+    tfidf = self.tfidf_featurize(docs, feature_map, doc_counts)
     return np.concatenate((x, tfidf), axis=1)
 
   def sentiment_binary_featurize(self, docs, feature_map, doc_counts=None):
@@ -220,7 +247,7 @@ class Featurizer():
       
       x[i][0] = sentiment_score #consider having both sentiment score and subjectivity score
 
-    binary = binary_featurize(docs, feature_map, doc_counts)
+    binary = self.binary_featurize(docs, feature_map, doc_counts)
     return np.concatenate((x, binary), axis=1)
 
 
