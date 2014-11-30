@@ -1,5 +1,5 @@
 import run_train_test
-import featurizer
+from featurizer import Featurizer
 import feature_selection
 import kfold
 import load_subreddit_data
@@ -12,12 +12,12 @@ from sklearn.svm import SVC
 from sklearn.metrics import classification_report
 
 FEAT_FUNCS = {
-  'tfidf': featurizer.tfidf_featurize, 
-  'binary': featurizer.binary_featurize,
-  'count_tfidf': featurizer.count_tfidf_featurize,
-  'count_binary': featurizer.count_binary_featurize,
-  'sentiment_tfidf': featurizer.sentiment_tfidf_featurize,
-  'sentiment_binary': featurizer.sentiment_binary_featurize
+  'tfidf': Featurizer.tfidf_featurize, 
+  'binary': Featurizer.binary_featurize,
+  'count_tfidf': Featurizer.count_tfidf_featurize,
+  'count_binary': Featurizer.count_binary_featurize,
+  'sentiment_tfidf': Featurizer.sentiment_tfidf_featurize,
+  'sentiment_binary': Featurizer.sentiment_binary_featurize
 }
 
 SELECT_FUNCS = {

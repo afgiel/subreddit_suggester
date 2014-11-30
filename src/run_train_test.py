@@ -25,7 +25,7 @@ def run(fold_num, title_split, ngram, select_func, feat_func, model, train_set, 
   print 'FEATURIZING TEST SET: FOLD ' + str(fold_num)   
   test_posts = [x[0] for x in test_set]
   test_labels = [x[1] for x in test_set]
-  des_y = featurizer.make_label_vector(test_labels)
+  des_y = f.make_label_vector(test_labels)
   test_x = f.featurize_test(test_posts)
   print 'TESTING: FOLD ' + str(fold_num)  
   pred_y = m.predict(test_x)
