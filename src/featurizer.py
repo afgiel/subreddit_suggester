@@ -220,7 +220,7 @@ class Featurizer():
     x = np.zeros((m, n))
     for i in range(len(docs)):
       doc = docs[i]
-      sentence = TextBlob(make_string(doc))
+      sentence = TextBlob(self.make_string(doc))
       sentiment_score = 0
       subjectivity_score = 0
       if sentence != "c-4": #for some reason it breaks trying to find synonyms for c-4
@@ -238,7 +238,7 @@ class Featurizer():
     x = np.zeros((m, n))
     for i in range(len(docs)):
       doc = docs[i]
-      sentence = TextBlob(make_string(doc))
+      sentence = TextBlob(self.make_string(doc))
       sentiment_score = 0
       subjectivity_score = 0
       if sentence != "c-4": #for some reason it breaks trying to find synonyms for c-4
