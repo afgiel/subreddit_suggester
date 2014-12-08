@@ -9,6 +9,8 @@ import load_subreddit_data
 # number of posts from a given subreddit.
 class KFolder():
 
+  SEED = .69
+
   def __init__(self, num_folds = 10,  shuffle = True):
     self.num_folds = num_folds
     self.fold_intervals = []
@@ -17,7 +19,7 @@ class KFolder():
     for subreddit in constants.subreddits:
       subreddit_data = load_subreddit_data.get_all_posts_and_labels(subreddit)
       if shuffle:
-        random.shuffle(subreddit_data)
+        random.shuffle(subreddit_data, lambda: SEED)
       self.dataset.append(subreddit_data)
       self.fold_intervals.append(len(subreddit_data)/num_folds)
     self.current_fold = 0
