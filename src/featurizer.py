@@ -212,14 +212,18 @@ class Featurizer():
     binary = self.binary_featurize(docs, feature_map, doc_counts)
     return np.concatenate((lda, binary), axis=1)
 
-  def count_tfidf_pos_featurize(self, docs, feature_map, doc_counts=None):
-    n = 3
+  def count_binary_pos_featurize(self, docs, feature_map, doc_counts=None):
+    n = 4
     m = len(docs)
     x = np.zeros((m, n))
     for i in range(len(docs)):
       doc = docs[i]
+      doc_size = len(doc)
 
       pos_tags = self.get_pos_tags(doc)
+
+      for tag in pos_tags:
+        pos_tags[tag] = float(pos_tags[tag])/doc_size
 
       #sentence = TextBlob(self.make_string(doc))
       #sentiment_score = 0
@@ -229,12 +233,13 @@ class Featurizer():
         #subjectivity_score = sentence.sentiment.subjectivity
       
       #x[i][0] = sentiment_score #consider having both sentiment score and subjectivity score
-      x[i][0] = len(doc)
+      x[i][0] = doc_size
       x[i][1] = pos_tags["adj"]
       x[i][2] = pos_tags["proper"]
+      x[i][3] = pos_tags["verb"]
 
-    tfidf = self.tfidf_featurize(docs, feature_map, doc_counts)
-    return np.concatenate((x, tfidf), axis=1)
+    binary = self.binary_featurize(docs, feature_map, doc_counts)
+    return np.concatenate((x, binary), axis=1)
 
 
   def sentiment_tfidf_featurize(self, docs, feature_map, doc_counts=None):
