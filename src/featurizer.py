@@ -212,8 +212,8 @@ class Featurizer():
     binary = self.binary_featurize(docs, feature_map, doc_counts)
     return np.concatenate((lda, binary), axis=1)
 
-  def sentiment_polarity_tfidf_pos_featurize(self, docs, feature_map, doc_counts=None):
-    n = 6
+  def count_tfidf_pos_featurize(self, docs, feature_map, doc_counts=None):
+    n = 3
     m = len(docs)
     x = np.zeros((m, n))
     for i in range(len(docs)):
@@ -221,19 +221,17 @@ class Featurizer():
 
       pos_tags = self.get_pos_tags(doc)
 
-      sentence = TextBlob(self.make_string(doc))
-      sentiment_score = 0
-      subjectivity_score = 0
-      if sentence != "c-4": #for some reason it breaks trying to find synonyms for c-4
-        sentiment_score = sentence.sentiment.polarity
-        subjectivity_score = sentence.sentiment.subjectivity
+      #sentence = TextBlob(self.make_string(doc))
+      #sentiment_score = 0
+      #subjectivity_score = 0
+      #if sentence != "c-4": #for some reason it breaks trying to find synonyms for c-4
+        #sentiment_score = sentence.sentiment.polarity
+        #subjectivity_score = sentence.sentiment.subjectivity
       
-      x[i][0] = sentiment_score #consider having both sentiment score and subjectivity score
-      x[i][1] = subjectivity_score
-      x[i][2] = pos_tags["adj"]
-      x[i][3] = pos_tags["noun"]
-      x[i][4] = pos_tags["proper"]
-      x[i][5] = pos_tags["verb"]
+      #x[i][0] = sentiment_score #consider having both sentiment score and subjectivity score
+      x[i][0] = len(doc)
+      x[i][1] = pos_tags["adj"]
+      x[i][2] = pos_tags["proper"]
 
     tfidf = self.tfidf_featurize(docs, feature_map, doc_counts)
     return np.concatenate((x, tfidf), axis=1)

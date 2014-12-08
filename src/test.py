@@ -17,7 +17,7 @@ FEAT_FUNCS = {
   'count_tfidf': Featurizer.count_tfidf_featurize,
   'count_binary': Featurizer.count_binary_featurize,
   'sentiment_tfidf': Featurizer.sentiment_tfidf_featurize,
-  'tfidf_pos': Featurizer.sentiment_polarity_tfidf_pos_featurize,
+  'tfidf_pos': Featurizer.count_tfidf_pos_featurize,
   'sentiment_binary': Featurizer.sentiment_binary_featurize,
   'lda': Featurizer.lda_featurize,
   'lda_binary': Featurizer.lda_binary_featurize,
