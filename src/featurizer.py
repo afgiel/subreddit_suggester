@@ -185,7 +185,7 @@ class Featurizer():
     for i in range(len(docs)):
       doc = docs[i]
       x[i][0] = len(doc)
-    tfidf = self.idf_featurize(docs, feature_map, doc_counts)
+    tfidf = self.tfidf_featurize(docs, feature_map, doc_counts)
     return np.concatenate((x, tfidf), axis=1)
     
   def count_binary_featurize(self, docs, feature_map, doc_counts=None): 
