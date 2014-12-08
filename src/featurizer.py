@@ -8,6 +8,8 @@ from gensim import corpora, models
 import feature_selection
 import utils
 import constants
+import nltk
+
 from unidecode import unidecode
 from textblob import TextBlob
 
@@ -210,6 +212,32 @@ class Featurizer():
     binary = self.binary_featurize(docs, feature_map, doc_counts)
     return np.concatenate((lda, binary), axis=1)
 
+  def sentiment_polarity_tfidf_pos_featurize(self, docs, feature_map, doc_counts=None):
+    n = 6
+    m = len(docs)
+    x = np.zeros((m, n))
+    for i in range(len(docs)):
+      doc = docs[i]
+
+      pos_tags = self.get_pos_tags(doc)
+
+      sentence = TextBlob(self.make_string(doc))
+      sentiment_score = 0
+      subjectivity_score = 0
+      if sentence != "c-4": #for some reason it breaks trying to find synonyms for c-4
+        sentiment_score = sentence.sentiment.polarity
+        subjectivity_score = sentence.sentiment.subjectivity
+      
+      x[i][0] = sentiment_score #consider having both sentiment score and subjectivity score
+      x[i][1] = subjectivity_score
+      x[i][2] = pos_tags["adj"]
+      x[i][3] = pos_tags["noun"]
+      x[i][4] = pos_tags["proper"]
+      x[i][5] = pos_tags["verb"]
+
+    tfidf = self.tfidf_featurize(docs, feature_map, doc_counts)
+    return np.concatenate((x, tfidf), axis=1)
+
 
   def sentiment_tfidf_featurize(self, docs, feature_map, doc_counts=None):
     n = 1
@@ -261,6 +289,21 @@ class Featurizer():
         sentence = sentence + " " + word
 
     return sentence
+
+  def get_pos_tags(self, doc):
+    num_pos = Counter()
+    pos_tags = nltk.pos_tag(doc)
+    for tag in pos_tags:
+      if tag[1] in ["JJ", "JJR", "JJS"]:
+        num_pos["adj"] += 1
+      elif tag[1] in ["NN", "NNS"]:
+        num_pos["noun"] += 1
+      elif tag[1] in ["NNP", "NNPS"]:
+        num_pos["proper"] += 1
+      elif tag[1] in ["VB", "VBD", "VBG", "VBN", "VBP", "VBZ"]:
+        num_pos["verb"] += 1
+
+    return num_pos
 
   def make_label_vector(self, labels):
     m = len(labels)
