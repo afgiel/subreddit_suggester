@@ -123,33 +123,27 @@ class Featurizer():
 
   def tfidf_featurize(self, docs, feature_map, doc_counts=None): 
     num_train_docs = doc_counts['NUM_TRAIN_DOCS']
-    n = len(feature_map) + 1
+    n = len(feature_map)
     m = len(docs)
     x = np.zeros((m, n)) 
     feature_map = {v:k for k, v in feature_map.items()}
     in_num_docs = []
     base_scores = []
     base_tf = 0.5
-    for j in range(n-1):
+    for j in range(n):
         token = feature_map[j]
-        token_in_num_docs = sum([doc_counts[a][token] for a in doc_counts if a != 'NUM_TRAIN_DOCS']) + 1
-        in_num_docs.append(token_in_num_docs)
+        token_in_num_docs = sum([doc_counts[a][token] for a in doc_counts if a != 'NUM_TRAIN_DOCS'])
         idf = math.log(float(num_train_docs)/token_in_num_docs)
         base_scores.append(base_tf*idf)
     for i in range(m):
-      if i % 100 == 0: print i, 'of', m
+      if i % 1000 == 0: print i, 'of', m
       doc = docs[i]
       counter = Counter(doc)
       if len(counter) != 0: max_occur = counter.most_common(1)[0][1]
-      for j in range(n-1):
+      for j in range(n):
         token = feature_map[j]
-        if token in counter:
-          tf = 0.5 + float(0.5*counter[token])/max_occur 
-          token_in_num_docs = in_num_docs[j] 
-          idf = math.log(float(num_train_docs)/token_in_num_docs)
-          x[i][j] = tf*idf
-        else:
-          x[i][j] = base_scores[j]
+        tf = float(0.5*counter[token])/max_occur 
+        x[i][j] = base_scores[j]*(1 + tf/base_tf)
     return x
 
 
