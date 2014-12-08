@@ -12,13 +12,13 @@ import feature_selection
 import featurizer
 
 
-def run(fold_num, title_split, ngram, select_func, feat_func, model, train_set, test_set):
+def run(fold_num, title_split, ngram, select_func, feat_func, model, train_set, test_set, C):
   f = featurizer.Featurizer(title_split, ngram, select_func, feat_func) 
   f.choose_features(train_set, fold_num)
   print 'FEATURIZING TRAIN SET: FOLD ' + str(fold_num)  
   train_x, train_y = f.featurize_train()
   print 'TRAINING: FOLD ' + str(fold_num)
-  m = model()
+  m = model(C=C)
   m.fit(train_x, train_y)
   print 'EVALUATING TRAIN: FOLD ' + str(fold_num)  
   pred_y = m.predict(train_x)
