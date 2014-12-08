@@ -2,7 +2,8 @@ import random
 import os.path as path
 
 import numpy as np
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, confusion_matrix
+import matplotlib.pyplot as plt
 
 import constants
 import load_subreddit_data
@@ -31,4 +32,8 @@ def run(fold_num, title_split, ngram, select_func, feat_func, model, train_set, 
   pred_y = m.predict(test_x)
   print 'EVALUATING TEST: FOLD ' + str(fold_num)   
   print classification_report(des_y, pred_y)
+  #cm = confusion_matrix(des_y, pred_y)
+  #plt.matshow(cm) 
+  #plt.colorbar()
+  #plt.show()
   return des_y, pred_y
