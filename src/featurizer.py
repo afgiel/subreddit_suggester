@@ -33,18 +33,18 @@ class Featurizer():
       title_word_counts, title_doc_counts, train_tokenized_titles, title_words = feature_selection.count(title_train_set, self.ngram)
       text_word_counts, text_doc_counts, train_tokenized_text, text_words = feature_selection.count(text_train_set, self.ngram) 
       print 'SELECTING FEATURES'
-      title_feature_file_path = self.get_file_path('title', constants.NUM_TITLE_FEATURES, fold_num)
-      text_feature_file_path = self.get_file_path('text', constants.NUM_TEXT_FEATURES, fold_num)
-      if not path.isfile(title_feature_file_path):
-        title_feature_map = self.select_func(title_words, title_word_counts, title_doc_counts, len(train_set), constants.NUM_TITLE_FEATURES)
-        utils.write_json_file(title_feature_map, title_feature_file_path)
-      else: 
-        title_feature_map = utils.load_json_file(title_feature_file_path)
-      if not path.isfile(text_feature_file_path):
-        text_feature_map = self.select_func(text_words, text_word_counts, text_doc_counts, len(train_set), constants.NUM_TEXT_FEATURES)
-        utils.write_json_file(text_feature_map, text_feature_file_path) 
-      else: 
-        text_feature_map = utils.load_json_file(text_feature_file_path)
+      #title_feature_file_path = self.get_file_path('title', constants.NUM_TITLE_FEATURES, fold_num)
+      #text_feature_file_path = self.get_file_path('text', constants.NUM_TEXT_FEATURES, fold_num)
+      #if not path.isfile(title_feature_file_path):
+      title_feature_map = self.select_func(title_words, title_word_counts, title_doc_counts, len(train_set), constants.NUM_TITLE_FEATURES)
+      #utils.write_json_file(title_feature_map, title_feature_file_path)
+      #else: 
+      #  title_feature_map = utils.load_json_file(title_feature_file_path)
+      #if not path.isfile(text_feature_file_path):
+      text_feature_map = self.select_func(text_words, text_word_counts, text_doc_counts, len(train_set), constants.NUM_TEXT_FEATURES)
+      #utils.write_json_file(text_feature_map, text_feature_file_path) 
+      #else: 
+      #  text_feature_map = utils.load_json_file(text_feature_file_path)
       self.title_word_counts = title_word_counts
       self.title_doc_counts = title_doc_counts 
       self.train_tokenized_titles = train_tokenized_titles
@@ -59,12 +59,12 @@ class Featurizer():
       both_train_set = [(x.title + ' ' + x.text, y) for x, y in train_set]
       both_word_counts, both_doc_counts, train_tokenized_both, both_words = feature_selection.count(both_train_set, self.ngram)
       print 'SELECTING FEATURES'
-      both_file_path = self.get_file_path('both', constants.NUM_BOTH_FEATURES, fold_num) 
-      if not path.isfile(both_file_path):
-        both_feature_map = self.select_func(both_words, both_word_counts, both_doc_counts,  len(both_train_set), constants.NUM_BOTH_FEATURES)
-        utils.write_json_file(both_feature_map, both_file_path)
-      else: 
-        both_feature_map = utils.load_json_file(both_file_path)
+      #both_file_path = self.get_file_path('both', constants.NUM_BOTH_FEATURES, fold_num) 
+      #if not path.isfile(both_file_path):
+      both_feature_map = self.select_func(both_words, both_word_counts, both_doc_counts,  len(both_train_set), constants.NUM_BOTH_FEATURES)
+      #utils.write_json_file(both_feature_map, both_file_path)
+      #else: 
+      #  both_feature_map = utils.load_json_file(both_file_path)
       self.both_word_counts = both_word_counts
       self.both_doc_counts = both_doc_counts 
       self.train_tokenized_both = train_tokenized_both

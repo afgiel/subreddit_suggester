@@ -51,10 +51,10 @@ def compute_mi(word, word_counts, doc_counts, num_tokens, m):
   mi = 0.0
   word_prob = float(sum(word_counts[word].values()))/num_tokens
   num_of_classes = len(constants.subreddits)
-  class_prob = 1/num_of_classes
+  class_prob = 1.0/num_of_classes
   for c in range(num_of_classes):
     num_of_docs_with_label_and_word = float(doc_counts[c][word]) 
-    num_of_docs_with_label = m/num_of_classes
+    num_of_docs_with_label = m/float(num_of_classes)
     pos_joint_prob = num_of_docs_with_label_and_word/m 
     pos_denom = class_prob*word_prob
     neg_joint_prob = (num_of_docs_with_label - num_of_docs_with_label_and_word)/m
