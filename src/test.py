@@ -45,7 +45,7 @@ def get_args():
   parser.add_argument('-featureRepresentation', '-f',choices=FEAT_FUNCS.keys(), default=FEAT_FUNCS.keys()[0], type=str)
   parser.add_argument('-kfolds', '-k', default = 0, type=int)
   parser.add_argument('-ngram', '-n', default = 1, type=int)
-  parser.add_argument('-titleSplit', '-t', default = False, type=bool)
+  parser.add_argument('--titleSplit', '--t', action = 'store_true', default=False)
   args = parser.parse_args()
 
   model = MODELS[args.model]

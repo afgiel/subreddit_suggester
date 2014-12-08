@@ -127,7 +127,6 @@ class Featurizer():
     m = len(docs)
     x = np.zeros((m, n)) 
     feature_map = {v:k for k, v in feature_map.items()}
-    in_num_docs = []
     base_scores = []
     base_tf = 0.5
     for j in range(n):
@@ -139,11 +138,15 @@ class Featurizer():
       if i % 1000 == 0: print i, 'of', m
       doc = docs[i]
       counter = Counter(doc)
-      if len(counter) != 0: max_occur = counter.most_common(1)[0][1]
+      if len(counter) != 0: 
+        max_occur = counter.most_common(1)[0][1]
       for j in range(n):
-        token = feature_map[j]
-        tf = float(0.5*counter[token])/max_occur 
-        x[i][j] = base_scores[j]*(1 + tf/base_tf)
+        if len(counter) != 0:
+          token = feature_map[j]
+          tf = float(0.5*counter[token])/max_occur 
+          x[i][j] = base_scores[j]*(1 + tf/base_tf)
+        else:
+          x[i][j] = base_scores[j]
     return x
 
 

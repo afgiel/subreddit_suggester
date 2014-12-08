@@ -30,3 +30,8 @@ def load_json_file(file_path):
   with open(file_path, 'r') as json_file:
     json_str = json_file.readline()
   return json.loads(json_str)
+
+def write_vectors_to_file(file_path, vectors):
+  with open(file_path, 'w') as vector_file:
+    vector_file.write(vectors)
+    
