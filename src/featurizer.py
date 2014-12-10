@@ -15,11 +15,13 @@ from textblob import TextBlob
 
 class Featurizer():
   
-  def __init__(self, title_split, ngram, select_func, feat_func):
+  def __init__(self, title_split, ngram, select_func, feat_func, no_stop_words, stem):
     self.title_split = title_split
     self.ngram = ngram
     self.select_func = select_func
     self.feat_func = feat_func
+    self.no_stop_words = no_stop_words
+    self.stem = stem
 
   def get_file_path(self, feat_type, num_features, fold_num):
     file_name = '_'.join([feat_type, str(fold_num), str(self.select_func.__name__), str(num_features)])
@@ -32,8 +34,8 @@ class Featurizer():
     if self.title_split:  
       title_train_set = [(x.title, y) for x, y in train_set]
       text_train_set = [(x.text, y) for x, y in train_set]
-      title_word_counts, title_doc_counts, train_tokenized_titles, title_words = feature_selection.count(title_train_set, self.ngram)
-      text_word_counts, text_doc_counts, train_tokenized_text, text_words = feature_selection.count(text_train_set, self.ngram) 
+      title_word_counts, title_doc_counts, train_tokenized_titles, title_words = feature_selection.count(title_train_set, self.ngram, self.no_stop_words, self.stem)
+      text_word_counts, text_doc_counts, train_tokenized_text, text_words = feature_selection.count(text_train_set, self.ngram, self.no_stop_words, self.stem)
       print 'SELECTING FEATURES'
       #title_feature_file_path = self.get_file_path('title', constants.NUM_TITLE_FEATURES, fold_num)
       #text_feature_file_path = self.get_file_path('text', constants.NUM_TEXT_FEATURES, fold_num)
@@ -59,7 +61,7 @@ class Featurizer():
       self.text_feature_map = text_feature_map
     else: 
       both_train_set = [(x.title + ' ' + x.text, y) for x, y in train_set]
-      both_word_counts, both_doc_counts, train_tokenized_both, both_words = feature_selection.count(both_train_set, self.ngram)
+      both_word_counts, both_doc_counts, train_tokenized_both, both_words = feature_selection.count(both_train_set, self.ngram, self.no_stop_words, self.stem)
       print 'SELECTING FEATURES'
       #both_file_path = self.get_file_path('both', constants.NUM_BOTH_FEATURES, fold_num) 
       #if not path.isfile(both_file_path):
@@ -90,15 +92,15 @@ class Featurizer():
     if self.title_split:
       test_titles = [x.title for x in test_posts]
       test_text = [x.text for x in test_posts]
-      test_tokenized_titles = [utils.tokenize(x, self.ngram) for x in test_titles] 
-      test_tokenized_text = [utils.tokenize(x, self.ngram) for x in test_text]
+      test_tokenized_titles = [utils.tokenize(x, self.ngram, self.no_stop_words, self.stem) for x in test_titles] 
+      test_tokenized_text = [utils.tokenize(x, self.ngram, self.no_stop_words, self.stem) for x in test_text]
       test_title_x = self.feat_func(self, test_tokenized_titles, self.title_feature_map, doc_counts=self.title_doc_counts)
       test_text_x = self.feat_func(self, test_tokenized_text, self.text_feature_map, doc_counts=self.text_doc_counts)
       test_x = np.concatenate((test_title_x, test_text_x), axis=1)
       return test_x
     else:
       test_both = [x.title + ' ' + x.text for x in test_posts]
-      test_tokenized_both = [utils.tokenize(x, self.ngram) for x in test_both]
+      test_tokenized_both = [utils.tokenize(x, self.ngram, self.no_stop_words, self.stem) for x in test_both]
       test_x = self.feat_func(self, test_tokenized_both, self.both_feature_map, doc_counts=self.both_doc_counts)
       return test_x
 
