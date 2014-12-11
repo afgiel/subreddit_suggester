@@ -34,5 +34,7 @@ def run(fold_num, title_split, ngram, select_func, feat_func, model, train_set, 
   #cm = confusion_matrix(des_y, pred_y)
   #plt.matshow(cm) 
   #plt.colorbar()
+  #plt.ylabel('True label')
+  #plt.xlabel('Predicted label')
   #plt.show()
   return des_y, pred_y
