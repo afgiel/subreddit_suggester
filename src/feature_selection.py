@@ -1,5 +1,6 @@
 import math
 from collections import Counter
+import random
 
 import utils
 import constants
@@ -43,6 +44,15 @@ def select_top_n_mi_features(all_words, word_counts, doc_counts, m, n):
   feature_map = dict()
   for token, score in top:
     feature_map[token] = index 
+    index += 1
+  return feature_map
+
+def select_n_random_features(all_words, word_counts, doc_counts, m, n):
+  feature_map = dict()
+  sample  = random.sample(all_words, n)
+  index = 0
+  for word in sample:
+    feature_map[word] = index
     index += 1
   return feature_map
   

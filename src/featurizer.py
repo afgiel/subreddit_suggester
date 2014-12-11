@@ -12,16 +12,24 @@ import nltk
 
 from unidecode import unidecode
 from textblob import TextBlob
+from sklearn.decomposition import PCA
 
 class Featurizer():
   
-  def __init__(self, title_split, ngram, select_func, feat_func, no_stop_words, stem):
+  def __init__(self, title_split, ngram, select_func, feat_func, no_stop_words, stem, pca_dim, num_both_features, num_title_features, num_text_features):
     self.title_split = title_split
     self.ngram = ngram
     self.select_func = select_func
     self.feat_func = feat_func
     self.no_stop_words = no_stop_words
     self.stem = stem
+    if pca_dim > 0:
+      self.pca = PCA(n_components = pca_dim)
+    else:
+      self.pca = False
+    self.num_both_features = num_both_features
+    self.num_title_features = num_title_features
+    self.num_text_features = num_text_features
 
   def get_file_path(self, feat_type, num_features, fold_num):
     file_name = '_'.join([feat_type, str(fold_num), str(self.select_func.__name__), str(num_features)])
@@ -40,12 +48,12 @@ class Featurizer():
       #title_feature_file_path = self.get_file_path('title', constants.NUM_TITLE_FEATURES, fold_num)
       #text_feature_file_path = self.get_file_path('text', constants.NUM_TEXT_FEATURES, fold_num)
       #if not path.isfile(title_feature_file_path):
-      title_feature_map = self.select_func(title_words, title_word_counts, title_doc_counts, len(train_set), constants.NUM_TITLE_FEATURES)
+      title_feature_map = self.select_func(title_words, title_word_counts, title_doc_counts, len(train_set), self.num_title_features)
       #utils.write_json_file(title_feature_map, title_feature_file_path)
       #else: 
       #  title_feature_map = utils.load_json_file(title_feature_file_path)
       #if not path.isfile(text_feature_file_path):
-      text_feature_map = self.select_func(text_words, text_word_counts, text_doc_counts, len(train_set), constants.NUM_TEXT_FEATURES)
+      text_feature_map = self.select_func(text_words, text_word_counts, text_doc_counts, len(train_set), self.num_text_features)
       #utils.write_json_file(text_feature_map, text_feature_file_path) 
       #else: 
       #  text_feature_map = utils.load_json_file(text_feature_file_path)
@@ -65,7 +73,7 @@ class Featurizer():
       print 'SELECTING FEATURES'
       #both_file_path = self.get_file_path('both', constants.NUM_BOTH_FEATURES, fold_num) 
       #if not path.isfile(both_file_path):
-      both_feature_map = self.select_func(both_words, both_word_counts, both_doc_counts,  len(both_train_set), constants.NUM_BOTH_FEATURES)
+      both_feature_map = self.select_func(both_words, both_word_counts, both_doc_counts,  len(both_train_set), self.num_both_features)
       #utils.write_json_file(both_feature_map, both_file_path)
       #else: 
       #  both_feature_map = utils.load_json_file(both_file_path)
@@ -82,9 +90,15 @@ class Featurizer():
       train_title_x = self.feat_func(self, self.train_tokenized_titles, self.title_feature_map, doc_counts=self.title_doc_counts)
       train_text_x = self.feat_func(self, self.train_tokenized_text, self.text_feature_map, doc_counts=self.text_doc_counts)
       train_x = np.concatenate((train_title_x, train_text_x), axis=1) 
+      if self.pca:
+        print "Finding the Principal Components -- number of components:", self.pca.get_params()['n_components']
+        train_x = self.pca.fit_transform(train_x)
       return train_x, train_y
     else:
       train_x = self.feat_func(self, self.train_tokenized_both, self.both_feature_map, doc_counts=self.both_doc_counts)
+      if self.pca:
+        print "Finding the Principal Components -- number of components:", self.pca.get_params()['n_components']
+        train_x = self.pca.fit_transform(train_x)
       return train_x, train_y
 
 
@@ -97,11 +111,17 @@ class Featurizer():
       test_title_x = self.feat_func(self, test_tokenized_titles, self.title_feature_map, doc_counts=self.title_doc_counts)
       test_text_x = self.feat_func(self, test_tokenized_text, self.text_feature_map, doc_counts=self.text_doc_counts)
       test_x = np.concatenate((test_title_x, test_text_x), axis=1)
+      if self.pca:
+        print "Transforming to PCA space"
+        test_x = self.pca.transform(test_x)
       return test_x
     else:
       test_both = [x.title + ' ' + x.text for x in test_posts]
       test_tokenized_both = [utils.tokenize(x, self.ngram, self.no_stop_words, self.stem) for x in test_both]
       test_x = self.feat_func(self, test_tokenized_both, self.both_feature_map, doc_counts=self.both_doc_counts)
+      if self.pca:
+        print "Transforming to PCA space"
+        test_x = self.pca.transform(test_x)
       return test_x
 
 # INTERFACE FOR FEATURIZER

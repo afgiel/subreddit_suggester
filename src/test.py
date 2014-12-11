@@ -27,7 +27,8 @@ FEAT_FUNCS = {
 
 SELECT_FUNCS = {
   'mi': feature_selection.select_top_n_mi_features, 
-  'all': feature_selection.select_all_features
+  'all': feature_selection.select_all_features,
+  'random': feature_selection.select_n_random_features,
 }
 
 MODELS = {
@@ -51,6 +52,10 @@ def get_args():
   parser.add_argument('--titleSplit', '--t', action = 'store_true', default=False)
   parser.add_argument('--noStopWords', action = 'store_true', default=False)
   parser.add_argument('--stem',  action = 'store_true', default=False)
+  parser.add_argument('-pca', default = 0, type=int)
+  parser.add_argument('-numBothFeatures', default = constants.NUM_BOTH_FEATURES, type=int)
+  parser.add_argument('-numTitleFeatures', default = constants.NUM_TITLE_FEATURES, type=int)
+  parser.add_argument('-numTextFeatures', default = constants.NUM_TEXT_FEATURES, type=int)
   args = parser.parse_args()
 
   C = args.C
@@ -59,16 +64,22 @@ def get_args():
   else:
     model = MODELS[args.model](C=C)
   feature_sel = SELECT_FUNCS[args.featureSelector]
+  pca = args.pca
   feature_rep = FEAT_FUNCS[args.featureRepresentation]
   kfolds = args.kfolds
   ngram = args.ngram
   title_split = args.titleSplit
   no_stop_words = args.noStopWords
   stem = args.stem
+  num_both_features = args.numBothFeatures
+  num_title_features = args.numTitleFeatures
+  num_text_features = args.numTextFeatures
   print "THE SETTINGS:"
   print "----------------"
   print "Model:", args.model
   print "Feature Selector:", args.featureSelector
+  if pca > 0:
+    print "PCA -- number of components:", pca
   print "Feature Representation:", args.featureRepresentation
   if args.model == 'naive_bayes':
     if C != 1.0:
@@ -78,17 +89,17 @@ def get_args():
   print "Ngram:", args.ngram
   print "Title Split:", args.titleSplit
   if args.featureSelector != 'all' and args.titleSplit:
-    print "Number of title features:", constants.NUM_TITLE_FEATURES
-    print "Number of text features:", constants.NUM_TEXT_FEATURES
+    print "Number of title features:", num_title_features
+    print "Number of text features:", num_text_features
   else:
-    print "Number of features:", constants.NUM_BOTH_FEATURES
+    print "Number of features:", num_both_features 
   print "Remove Stop Words:", args.noStopWords
   print "Stem Words:", args.stem
-  return (feature_sel, feature_rep, model, kfolds, ngram, title_split, no_stop_words, stem)
+  return (feature_sel, feature_rep, model, kfolds, ngram, title_split, no_stop_words, stem, pca, num_both_features, num_title_features, num_text_features)
 
 
 # TODO make ngrams actually do something within util.py
-feature_sel, feature_rep, model, kfolds, ngram, title_split, no_stop_words, stem = get_args()
+feature_sel, feature_rep, model, kfolds, ngram, title_split, no_stop_words, stem, pca, num_both_features, num_title_features, num_text_features = get_args()
 
 # By default kfolds is 0 unless specified at command-line. Thus by default k-fold cross validation
 # is not ran.
@@ -100,12 +111,12 @@ if kfolds:
   while k_folder.has_next_fold():
     train_set, test_set = k_folder.get_next_fold()
     print '******** TESTING ON FOLD', k_folder.current_fold, '***********'
-    des_i_y, pred_i_y = run_train_test.run(k_folder.current_fold, title_split, ngram, feature_sel, feature_rep, model, train_set, test_set, no_stop_words, stem)
+    des_i_y, pred_i_y = run_train_test.run(k_folder.current_fold, title_split, ngram, feature_sel, feature_rep, model, train_set, test_set, no_stop_words, stem, pca, num_both_features, num_title_features, num_text_features)
     des_y.extend(des_i_y)
     pred_y.extend(pred_i_y)
   print '******EVALUATING OVER ALL FOLDS******'
   print classification_report(des_y, pred_y)
 else:
   train_set, test_set =  load_subreddit_data.get_train_and_test_sets()
-  run_train_test.run('all', title_split, ngram, feature_sel, feature_rep, model, train_set, test_set, no_stop_words, stem)
+  run_train_test.run('all', title_split, ngram, feature_sel, feature_rep, model, train_set, test_set, no_stop_words, stem, pca, num_both_features, num_title_features, num_text_features)
 

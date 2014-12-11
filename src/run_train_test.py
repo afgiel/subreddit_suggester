@@ -12,8 +12,8 @@ import feature_selection
 import featurizer
 
 
-def run(fold_num, title_split, ngram, select_func, feat_func, model, train_set, test_set, no_stop_words, stem):
-  f = featurizer.Featurizer(title_split, ngram, select_func, feat_func, no_stop_words, stem) 
+def run(fold_num, title_split, ngram, select_func, feat_func, model, train_set, test_set, no_stop_words, stem, pca, num_both_features, num_title_features, num_text_features):
+  f = featurizer.Featurizer(title_split, ngram, select_func, feat_func, no_stop_words, stem, pca, num_both_features, num_title_features, num_text_features) 
   f.choose_features(train_set, fold_num)
   print 'FEATURIZING TRAIN SET: FOLD ' + str(fold_num)  
   train_x, train_y = f.featurize_train()
