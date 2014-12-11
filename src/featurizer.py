@@ -165,11 +165,11 @@ class Featurizer():
       self.dictionary = corpora.Dictionary(docs)
     print 'CREATING LDA CORPUS'
     corpus = [self.dictionary.doc2bow(doc) for doc in docs]
-    if not hasattr(self, 'lda_tfidf'):
-      print 'TRAINING LDA TFIDF'
-      self.lda_tfidf = models.TfidfModel(corpus) 
-    print 'APPLYING LDA TFIDF'
-    corpus = [self.lda_tfidf[doc] for doc in corpus]
+    #if not hasattr(self, 'lda_tfidf'):
+    #  print 'TRAINING LDA TFIDF'
+    #  self.lda_tfidf = models.TfidfModel(corpus) 
+    #print 'APPLYING LDA TFIDF'
+    #corpus = [self.lda_tfidf[doc] for doc in corpus]
     if not hasattr(self, 'lda'):
       print 'TRAINING LDA'
       self.lda = models.ldamodel.LdaModel(corpus=corpus, id2word=self.dictionary, num_topics=constants.NUM_TOPICS) 

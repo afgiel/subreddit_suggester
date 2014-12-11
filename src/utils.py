@@ -34,9 +34,14 @@ def tokenize(text, n, no_stop_words, stem):
 
   if n == 1:
     return tokenized
-
-  return list(ngrams(tokenized, n))  
-
+  if n == 2:
+    tokenized.extend(list(ngrams(tokenized, n)))
+    return tokenized
+  else:
+    new_tokenized = []
+    for i in range(2, n):
+      new_tokenized.extend(list(ngrams(tokenized, i)))
+    return new_tokenized
   #return word_tokenize(text.lower())
 
 
