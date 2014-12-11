@@ -12,7 +12,7 @@ import nltk
 
 from unidecode import unidecode
 from textblob import TextBlob
-from sklearn.decomposition import PCA
+from sklearn.decomposition import RandomizedPCA
 
 class Featurizer():
   
@@ -24,7 +24,7 @@ class Featurizer():
     self.no_stop_words = no_stop_words
     self.stem = stem
     if pca_dim > 0:
-      self.pca = PCA(n_components = pca_dim)
+      self.pca = RandomizedPCA(n_components = pca_dim)
     else:
       self.pca = False
     self.num_both_features = num_both_features
