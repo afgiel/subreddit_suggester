@@ -15,7 +15,7 @@ ax.plot(x, dev, color='b', linestyle='-', label='dev')
 fontP = FontProperties()
 fontP.set_size('small')
 #, bbox_to_anchor=(0.7,-0.1
-lgd = ax.legend(prop=fontP, loc=5)
+lgd = ax.legend(prop=fontP, loc=2)
 plt.title('Determining Optimal Number of Topics')
 plt.xlabel('Number of Topics')
 plt.ylabel('F1')
