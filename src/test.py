@@ -48,6 +48,7 @@ def get_args():
   parser.add_argument('-featureRepresentation', '-f',choices=FEAT_FUNCS.keys(), default='tfidf', type=str)
   parser.add_argument('-kfolds', '-k', default = 0, type=int)
   parser.add_argument('-C', default = 1.0, type=float)
+  parser.add_argument('--l1', default = False, action = 'store_true')
   parser.add_argument('-ngram', '-n', default = 1, type=int)
   parser.add_argument('--titleSplit', '--t', action = 'store_true', default=False)
   parser.add_argument('--noStopWords', action = 'store_true', default=False)
@@ -62,7 +63,10 @@ def get_args():
   if args.model == 'naive_bayes':
     model = MODELS[args.model]()
   else:
-    model = MODELS[args.model](C=C)
+    if args.l1:
+      model = MODELS[args.model](penalty='l1', C=C)
+    else:
+      model = MODELS[args.model](C=C)
   feature_sel = SELECT_FUNCS[args.featureSelector]
   pca = args.pca
   feature_rep = FEAT_FUNCS[args.featureRepresentation]
@@ -85,14 +89,19 @@ def get_args():
     if C != 1.0:
       print "WARNING: Disregarding regularization parameter C - naive bayes can not be regularized"
   else:
+    if args.l1:
+      print "Using L1 regularization"
+    else:
+      print "Using L2 regularization"
     print "C (regularization param not the language):", args.C
   print "Ngram:", args.ngram
   print "Title Split:", args.titleSplit
-  if args.featureSelector != 'all' and args.titleSplit:
-    print "Number of title features:", num_title_features
-    print "Number of text features:", num_text_features
-  else:
-    print "Number of features:", num_both_features 
+  if args.featureSelector != 'all':
+    if args.titleSplit:
+      print "Number of title features:", num_title_features
+      print "Number of text features:", num_text_features
+    else:
+      print "Number of features:", num_both_features 
   print "Remove Stop Words:", args.noStopWords
   print "Stem Words:", args.stem
   return (feature_sel, feature_rep, model, kfolds, ngram, title_split, no_stop_words, stem, pca, num_both_features, num_title_features, num_text_features)

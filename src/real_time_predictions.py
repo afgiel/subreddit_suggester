@@ -1,5 +1,3 @@
-
-
 import random
 import os.path as path
 
@@ -16,6 +14,12 @@ import reddit_post
 
 
 title_split = True
+no_stop_words = False
+stem = False
+pca_dim = 0
+num_both_features = constants.NUM_BOTH_FEATURES
+num_title_features = constants.NUM_TITLE_FEATURES
+num_text_features = constants.NUM_TEXT_FEATURES
 ngram = 1
 select_func = feature_selection.select_top_n_mi_features
 feat_func = featurizer.Featurizer.count_binary_featurize 
@@ -25,7 +29,7 @@ fold_num = 'all'
 
 train_set, test_set =  load_subreddit_data.get_train_and_test_sets()
 train_set = train_set + test_set
-f = featurizer.Featurizer(title_split, ngram, select_func, feat_func) 
+f = featurizer.Featurizer(title_split, ngram, select_func, feat_func, no_stop_words, stem, pca_dim, num_both_features, num_title_features, num_text_features) 
 f.choose_features(train_set, fold_num)
 print 'FEATURIZING TRAIN SET: FOLD ' + str(fold_num)  
 train_x, train_y = f.featurize_train()
