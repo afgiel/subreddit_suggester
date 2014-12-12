@@ -52,6 +52,7 @@ def get_args():
   parser.add_argument('-ngram', '-n', default = 1, type=int)
   parser.add_argument('--titleSplit', '--t', action = 'store_true', default=False)
   parser.add_argument('--noStopWords', action = 'store_true', default=False)
+  parser.add_argument('--TESTING', action = 'store_true', default=False)
   parser.add_argument('--stem',  action = 'store_true', default=False)
   parser.add_argument('-pca', default = 0, type=int)
   parser.add_argument('-numBothFeatures', default = constants.NUM_BOTH_FEATURES, type=int)
@@ -78,6 +79,7 @@ def get_args():
   num_both_features = args.numBothFeatures
   num_title_features = args.numTitleFeatures
   num_text_features = args.numTextFeatures
+  TESTING = args.TESTING
   print "THE SETTINGS:"
   print "----------------"
   print "Model:", args.model
@@ -104,15 +106,22 @@ def get_args():
       print "Number of features:", num_both_features 
   print "Remove Stop Words:", args.noStopWords
   print "Stem Words:", args.stem
-  return (feature_sel, feature_rep, model, kfolds, ngram, title_split, no_stop_words, stem, pca, num_both_features, num_title_features, num_text_features)
+  return (feature_sel, feature_rep, model, kfolds, ngram, title_split, no_stop_words, stem, pca, num_both_features, num_title_features, num_text_features, TESTING)
 
 
 # TODO make ngrams actually do something within util.py
-feature_sel, feature_rep, model, kfolds, ngram, title_split, no_stop_words, stem, pca, num_both_features, num_title_features, num_text_features = get_args()
+feature_sel, feature_rep, model, kfolds, ngram, title_split, no_stop_words, stem, pca, num_both_features, num_title_features, num_text_features, TESTING = get_args()
+
+if TESTING: 
+  print 'EVALUATING ON REAL TEST SET' 
+  train_set = load_subreddit_data.get_train_set()
+  test_set = load_subreddit_data.get_test_set()
+  run_train_test.run('TESTING', title_split, ngram, feature_sel, feature_rep, model, train_set, test_set, no_stop_words, stem, pca, num_both_features, num_title_features, num_text_features)
+
 
 # By default kfolds is 0 unless specified at command-line. Thus by default k-fold cross validation
 # is not ran.
-if kfolds:
+elif kfolds:
   print 'RUNNING KFOLD CROSS-VALIDATION WITH', kfolds, 'FOLDS'
   k_folder = kfold.KFolder(kfolds)
   des_y = []
